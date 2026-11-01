@@ -16,7 +16,7 @@
 
   --accent-primary: #3185FF;
   --accent-primary-hover: #4C97FF;
-  
+
   --robot-normal: #2583F5;
   --robot-selected: #46C7FF;
   --route-original: #4AB3FF;
@@ -42,7 +42,8 @@
   padding: 0;
 }
 
-body, html {
+body,
+html {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -370,11 +371,26 @@ body, html {
   border-radius: 50%;
 }
 
-.leg-dot.normal { background: var(--robot-normal); }
-.leg-dot.selected { background: var(--robot-selected); box-shadow: 0 0 6px var(--robot-selected); }
-.leg-dot.goal { background: var(--goal-marker); }
-.leg-dot.delayed { background: var(--robot-delayed); }
-.leg-dot.emergency { background: var(--robot-emergency); }
+.leg-dot.normal {
+  background: var(--robot-normal);
+}
+
+.leg-dot.selected {
+  background: var(--robot-selected);
+  box-shadow: 0 0 6px var(--robot-selected);
+}
+
+.leg-dot.goal {
+  background: var(--goal-marker);
+}
+
+.leg-dot.delayed {
+  background: var(--robot-delayed);
+}
+
+.leg-dot.emergency {
+  background: var(--robot-emergency);
+}
 
 .leg-rect {
   width: 10px;
@@ -382,18 +398,36 @@ body, html {
   border-radius: 2px;
 }
 
-.leg-rect.blocked { background: var(--cell-blocked); }
-.leg-rect.shelf { background: #181a1d; border: 1px solid #3b4252; }
-.leg-rect.incident { border: 1px solid var(--cell-blocked); background: rgba(240, 79, 85, 0.25); }
+.leg-rect.blocked {
+  background: var(--cell-blocked);
+}
+
+.leg-rect.shelf {
+  background: #181a1d;
+  border: 1px solid #3b4252;
+}
+
+.leg-rect.incident {
+  border: 1px solid var(--cell-blocked);
+  background: rgba(240, 79, 85, 0.25);
+}
 
 .leg-line {
   width: 14px;
   height: 2.5px;
 }
 
-.leg-line.orig { border-top: 2px dashed var(--route-original); }
-.leg-line.inval { border-top: 2px dashed var(--route-invalidated); }
-.leg-line.repaired { background: var(--route-repaired); }
+.leg-line.orig {
+  border-top: 2px dashed var(--route-original);
+}
+
+.leg-line.inval {
+  border-top: 2px dashed var(--route-invalidated);
+}
+
+.leg-line.repaired {
+  background: var(--route-repaired);
+}
 
 /* In-Viewport Camera Presets Bar (Top-Right) */
 .viewport-camera-bar {
@@ -487,7 +521,8 @@ body, html {
 /* In-Viewport 3D Callout Tooltips (Positioned dynamically in screen space) */
 .callout-robot-card {
   position: absolute;
-  transform: translate(18px, -50%); /* sits to the right of the robot so it never stacks with the incident badge */
+  transform: translate(18px, -50%);
+  /* sits to the right of the robot so it never stacks with the incident badge */
   background: rgba(13, 24, 36, 0.95);
   border: 1px solid var(--accent-primary);
   border-radius: var(--radius-md);
@@ -570,11 +605,30 @@ body, html {
   text-transform: uppercase;
 }
 
-.state-badge.moving { background: rgba(56, 217, 138, 0.2); color: var(--route-repaired); }
-.state-badge.idle { background: rgba(145, 164, 186, 0.2); color: var(--text-secondary); }
-.state-badge.delayed { background: rgba(255, 182, 46, 0.2); color: var(--robot-delayed); }
-.state-badge.failed { background: rgba(240, 79, 85, 0.25); color: #FFA1A5; }
-.state-badge.replanning { background: rgba(168, 85, 247, 0.2); color: #C084FC; }
+.state-badge.moving {
+  background: rgba(56, 217, 138, 0.2);
+  color: var(--route-repaired);
+}
+
+.state-badge.idle {
+  background: rgba(145, 164, 186, 0.2);
+  color: var(--text-secondary);
+}
+
+.state-badge.delayed {
+  background: rgba(255, 182, 46, 0.2);
+  color: var(--robot-delayed);
+}
+
+.state-badge.failed {
+  background: rgba(240, 79, 85, 0.25);
+  color: #FFA1A5;
+}
+
+.state-badge.replanning {
+  background: rgba(168, 85, 247, 0.2);
+  color: #C084FC;
+}
 
 /* In-Viewport Dynamic Blockage Callout Banner */
 .callout-incident-badge {
@@ -1133,9 +1187,17 @@ body, html {
   height: 2.5px;
 }
 
-.route-line-sample.orig { border-top: 2px dashed var(--route-original); }
-.route-line-sample.inval { border-top: 2px dashed var(--route-invalidated); }
-.route-line-sample.repaired { background: var(--route-repaired); }
+.route-line-sample.orig {
+  border-top: 2px dashed var(--route-original);
+}
+
+.route-line-sample.inval {
+  border-top: 2px dashed var(--route-invalidated);
+}
+
+.route-line-sample.repaired {
+  background: var(--route-repaired);
+}
 
 .route-steps-count {
   font-family: var(--font-mono);
@@ -1256,11 +1318,11 @@ body, html {
   border-radius: 50%;
 }
 
-input:checked + .switch-slider {
+input:checked+.switch-slider {
   background-color: var(--accent-primary);
 }
 
-input:checked + .switch-slider:before {
+input:checked+.switch-slider:before {
   transform: translateX(14px);
 }
 
@@ -1318,11 +1380,30 @@ input:checked + .switch-slider:before {
   flex-shrink: 0;
 }
 
-.footer-metric-card.green .icon-wrap { background: rgba(56, 217, 138, 0.15); color: var(--route-repaired); }
-.footer-metric-card.blue .icon-wrap { background: rgba(49, 133, 255, 0.15); color: var(--accent-primary); }
-.footer-metric-card.cyan .icon-wrap { background: rgba(70, 199, 255, 0.15); color: var(--robot-selected); }
-.footer-metric-card.purple .icon-wrap { background: rgba(168, 85, 247, 0.15); color: #C084FC; }
-.footer-metric-card.red .icon-wrap { background: rgba(240, 79, 85, 0.15); color: var(--cell-blocked); }
+.footer-metric-card.green .icon-wrap {
+  background: rgba(56, 217, 138, 0.15);
+  color: var(--route-repaired);
+}
+
+.footer-metric-card.blue .icon-wrap {
+  background: rgba(49, 133, 255, 0.15);
+  color: var(--accent-primary);
+}
+
+.footer-metric-card.cyan .icon-wrap {
+  background: rgba(70, 199, 255, 0.15);
+  color: var(--robot-selected);
+}
+
+.footer-metric-card.purple .icon-wrap {
+  background: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+}
+
+.footer-metric-card.red .icon-wrap {
+  background: rgba(240, 79, 85, 0.15);
+  color: var(--cell-blocked);
+}
 
 .metric-meta {
   display: flex;
@@ -1383,4 +1464,23 @@ input:checked + .switch-slider:before {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #3185FF;
+}
+
+/* Legend collapse (arrow button) */
+.legend-collapse-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.viewport-legend-card.collapsed .legend-items-list {
+  display: none;
+}
+
+.viewport-legend-card.collapsed .legend-header {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.viewport-legend-card.collapsed .legend-collapse-btn svg {
+  transform: rotate(180deg);
 }

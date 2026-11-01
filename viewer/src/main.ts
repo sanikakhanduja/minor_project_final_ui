@@ -15,6 +15,9 @@ const STEPS_PER_SECOND = 3.5;
 const OVERVIEW_PITCH = THREE.MathUtils.degToRad(58);
 const OVERVIEW_YAW = THREE.MathUtils.degToRad(-14);
 const INCIDENT_PITCH = THREE.MathUtils.degToRad(52);
+/** One naming format for robots everywhere in the UI. */
+const robotLabel = (id: number) => `R${id}`;
+const FOLLOW_OFFSET = new THREE.Vector3(-3, 7, 8); // camera offset from the robot in follow mode
 const FOCUS_DIM = 0.45; // environment brightness while an incident is selected
 const DISRUPTION_LABELS = { blocked_cell: 'Aisle blockage', robot_failure: 'Robot failure', robot_delay: 'Robot delay' } as const;
 
@@ -177,6 +180,8 @@ class ViewerApp {
       this.selectedRobotId = null;
       this.updatePathsVisualization();
       this.clockTime = Math.min(this.clockTime, this.activeReplay.frames.length - 1);
+      // Start with robot 0 selected (instead of a hard-coded placeholder robot)
+      if (this.activeReplay.frames[0]?.pos.length > 0) this.showRobotCard(0);
 
       const slider = document.getElementById('step-slider') as HTMLInputElement;
       if (slider) slider.max = (this.activeReplay.frames.length - 1).toString();
@@ -334,8 +339,8 @@ class ViewerApp {
       inc.affected_robots.forEach((rId) => {
         const chip = document.createElement('span');
         chip.className = 'robot-chip';
-        chip.innerText = `AMR #${rId}`;
-        chip.title = `Click to inspect AMR #${rId}`;
+        chip.innerText = robotLabel(rId);
+        chip.title = `Click to inspect ${robotLabel(rId)}`;
         chip.addEventListener('click', () => {
           this.selectedRobotId = rId;
           this.showRobotCard(rId);
@@ -505,7 +510,7 @@ class ViewerApp {
       const [x, y] = frame.pos[r];
       const goal = frame.goals?.[r];
       const set = (id: string, text: string) => { const el = document.getElementById(id); if (el) el.innerText = text; };
-      set('callout-robot-id', `R${r}`);
+      set('callout-robot-id', robotLabel(r));
       set('callout-robot-pos', `(${x}, ${y})`);
       set('callout-robot-dest', goal ? `(${goal[0]}, ${goal[1]})` : 'not recorded');
       set('callout-robot-next', !next ? '—' : next[0] === x && next[1] === y ? 'wait' : `(${next[0]}, ${next[1]})`);
@@ -532,7 +537,7 @@ class ViewerApp {
     const state = frame?.state[rId] || 'moving';
 
     const cardId = document.getElementById('robot-card-id') || document.getElementById('detail-robot-id');
-    if (cardId) cardId.innerText = `AMR #${rId}`;
+    if (cardId) cardId.innerText = robotLabel(rId);
     const stateEl = document.getElementById('robot-card-state') || document.getElementById('detail-state');
     if (stateEl) stateEl.innerText = state.toUpperCase();
     const posEl = document.getElementById('robot-card-pos') || document.getElementById('detail-pos');
@@ -540,6 +545,9 @@ class ViewerApp {
     const goal = frame?.goals?.[rId];
     const goalEl = document.getElementById('robot-card-goal') || document.getElementById('detail-dest');
     if (goalEl) goalEl.innerText = goal ? `(${goal[0]}, ${goal[1]})` : 'not recorded';
+
+    const tsEl = document.getElementById('detail-timestep');
+    if (tsEl) tsEl.innerText = `${s0} / ${(this.activeReplay?.frames.length ?? 1) - 1}`;
 
     const dot = document.getElementById('robot-card-status-dot');
     if (dot) {
@@ -639,6 +647,16 @@ class ViewerApp {
     document.getElementById('btn-cam-robot')?.addEventListener('click', () => this.setCameraPreset(3));
     document.getElementById('btn-cam-incident')?.addEventListener('click', () => this.setCameraPreset(2));
     document.getElementById('btn-cam-reset')?.addEventListener('click', () => this.setCameraPreset(1));
+    // Legend collapse / expand arrow
+    document.getElementById('legend-collapse-btn')?.addEventListener('click', () => {
+      const card = document.getElementById('viewport-legend');
+      const collapsed = card?.classList.toggle('collapsed');
+      document.getElementById('legend-collapse-btn')?.setAttribute('aria-expanded', String(!collapsed));
+    });
+
+    // Sidebar "Focus on ..." buttons (previously had no handlers)
+    document.getElementById('btn-focus-robot')?.addEventListener('click', () => this.setCameraPreset(3));
+    document.getElementById('btn-focus-inc-sidebar')?.addEventListener('click', () => this.setCameraPreset(2));
 
     // Scenario Select
     const scenarioSelect = document.getElementById('scenario-select') as HTMLSelectElement | null;
@@ -745,13 +763,13 @@ class ViewerApp {
     const card = document.getElementById('viewport-card') || this.container;
     if (!document.fullscreenElement) {
       if (card.requestFullscreen) {
-        card.requestFullscreen().catch(() => {});
+        card.requestFullscreen().catch(() => { });
       } else if ((card as any).webkitRequestFullscreen) {
         (card as any).webkitRequestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
+        document.exitFullscreen().catch(() => { });
       } else if ((document as any).webkitExitFullscreen) {
         (document as any).webkitExitFullscreen();
       }
@@ -762,8 +780,8 @@ class ViewerApp {
     window.addEventListener('keydown', (e) => {
       this.keysPressed[e.key.toLowerCase()] = true;
       if (e.key === '1') this.setCameraPreset(1);
-      if (e.key === '2') this.setCameraPreset(2);
-      if (e.key === '3') this.setCameraPreset(3);
+      if (e.key === '2') this.setCameraPreset(3); // robot (matches button tooltip)
+      if (e.key === '3') this.setCameraPreset(2); // incident
       if (e.key === '0' || e.key.toLowerCase() === 'r') this.setCameraPreset(1);
       if (e.key.toLowerCase() === 'f') this.toggleFullscreen();
       if (e.key.toLowerCase() === 'n') this.jumpIncident(1);
@@ -779,7 +797,7 @@ class ViewerApp {
       }
       if (e.key === 'Escape') {
         if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
+          document.exitFullscreen().catch(() => { });
         }
         document.getElementById('incident-panel')?.classList.add('hidden');
         document.getElementById('robot-card')?.classList.add('hidden');
@@ -830,9 +848,31 @@ class ViewerApp {
 
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(mouse, this.camera);
-      const rId = this.fleet.pick(raycaster);
+      // 1) exact mesh hit (works when zoomed in); 2) nearest robot on screen (works from the
+      // overview, where robots are a few pixels wide and the mesh ray misses them).
+      const rId = this.fleet.pick(raycaster) ?? this.pickNearestOnScreen(e.clientX - rect.left, e.clientY - rect.top, rect);
       if (rId !== null) this.showRobotCard(rId);
     });
+  }
+
+  /** Robot whose projected position is closest to the click, within a forgiving pixel radius. */
+  private pickNearestOnScreen(px: number, py: number, rect: DOMRect): number | null {
+    const n = this.activeReplay?.frames[0]?.pos.length ?? 0;
+    const v = new THREE.Vector3();
+    const maxDist = 22; // px
+    let best: number | null = null;
+    let bestD = maxDist;
+    for (let r = 0; r < n; r++) {
+      const pose = this.fleet.poses[r];
+      if (!pose) continue;
+      v.set(pose.x, 0.3, pose.z).project(this.camera);
+      if (v.z < -1 || v.z > 1) continue; // behind camera / outside depth range
+      const sx = (v.x * 0.5 + 0.5) * rect.width;
+      const sy = (-v.y * 0.5 + 0.5) * rect.height;
+      const d = Math.hypot(sx - px, sy - py);
+      if (d < bestD) { bestD = d; best = r; }
+    }
+    return best;
   }
 
   private jumpIncident(direction: number) {
@@ -910,10 +950,16 @@ class ViewerApp {
         this.overviewPose(this.cameraEndPos, this.cameraEndTarget, 0.5);
       }
     } else if (preset === 3) {
+      // Follow mode needs a robot. If none is selected, pick one so the camera
+      // can actually lock on (selected incident's first robot, else robot 0).
+      if (this.selectedRobotId === null) {
+        const fallback = this.selectedIncident?.affected_robots[0] ?? 0;
+        this.showRobotCard(fallback);
+      }
       const pose = this.fleet.poses[this.selectedRobotId ?? 0];
       const x = pose?.x ?? this.mapWidth / 2;
       const z = pose?.z ?? this.mapHeight / 2;
-      this.cameraEndPos.set(x - 3, 7, z + 8);
+      this.cameraEndPos.set(x + FOLLOW_OFFSET.x, FOLLOW_OFFSET.y, z + FOLLOW_OFFSET.z);
       this.cameraEndTarget.set(x, 0.3, z);
     }
 
@@ -931,17 +977,30 @@ class ViewerApp {
   }
 
   private updateCameraAnimation(dt: number) {
+    const following = this.activePreset === 3 && this.selectedRobotId !== null;
+    const pose = following ? this.fleet.poses[this.selectedRobotId!] : undefined;
+
     if (!this.isCameraTransitioning) {
-      // Follow camera tracks the selected robot's interpolated pose
-      if (this.activePreset === 3 && this.selectedRobotId !== null) {
-        const pose = this.fleet.poses[this.selectedRobotId];
-        if (pose) {
-          const before = this.controls.target.clone();
-          this.controls.target.lerp(this.followTarget.set(pose.x, 0.3, pose.z), 0.1);
-          this.camera.position.add(before.sub(this.controls.target).negate());
-        }
+      // Follow camera: translate camera + orbit target together toward the robot's
+      // live pose. Frame-rate independent, and keeps whatever orbit angle/zoom the
+      // user has chosen. Snaps when the robot teleports (replay loop / scrubbing).
+      if (pose) {
+        const goal = this.followTarget.set(pose.x, 0.3, pose.z);
+        const gap = goal.distanceTo(this.controls.target);
+        const k = gap > 12 ? 1 : 1 - Math.exp(-dt * 14);
+        const dx = (goal.x - this.controls.target.x) * k;
+        const dy = (goal.y - this.controls.target.y) * k;
+        const dz = (goal.z - this.controls.target.z) * k;
+        this.controls.target.x += dx; this.controls.target.y += dy; this.controls.target.z += dz;
+        this.camera.position.x += dx; this.camera.position.y += dy; this.camera.position.z += dz;
       }
       return;
+    }
+
+    // While gliding in, aim at where the robot is NOW, not where it was at click time.
+    if (pose) {
+      this.cameraEndTarget.set(pose.x, 0.3, pose.z);
+      this.cameraEndPos.set(pose.x + FOLLOW_OFFSET.x, FOLLOW_OFFSET.y, pose.z + FOLLOW_OFFSET.z);
     }
 
     this.cameraAnimProgress += dt / this.cameraAnimDuration;
