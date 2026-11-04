@@ -1,4 +1,4 @@
-"""LLM Strategist with multi-tier provider cascade: Groq primary, Ollama fallback, and deterministic heuristic."""
+"""LLM Strategist with multi-tier provider cascade: Gemini, Groq, Ollama fallback, and deterministic heuristic."""
 
 import os
 import time
@@ -35,9 +35,10 @@ class Strategist:
     """Strategist that queries an LLM to produce repair directives.
 
     Provider Cascade:
-    1. Primary: Groq API (free-tier, fast inference with structured JSON output)
-    2. Secondary Fallback: Local Ollama (when Groq is offline or unavailable)
-    3. Tertiary Fallback: Deterministic Heuristic (guaranteed valid & predictable)
+    1. Primary: Gemini API (if GEMINI_API_KEY or GOOGLE_API_KEY is set)
+    2. Secondary: Groq API (or standard OpenAI API)
+    3. Tertiary Fallback: Local Ollama (when cloud APIs are offline or unavailable)
+    4. Deterministic Heuristic: Guaranteed valid & predictable rule-based fallback
     """
 
     def __init__(
@@ -50,6 +51,7 @@ class Strategist:
         self.temperature = temperature
         self.force_heuristic = force_heuristic
         self.client = client
+        self.gemini_client = None
         self.ollama_client = None
 
         self.last_provider: str = "none"
@@ -61,17 +63,35 @@ class Strategist:
         # Auto-load .env
         _load_env_file()
 
-        # Primary configuration (Groq by default, or OpenAI fallback)
+        # 1. Gemini configuration (via Google OpenAI-compatible endpoint)
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        gemini_base_url = os.environ.get("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
+        self.gemini_model = os.environ.get("GEMINI_MODEL") or "gemini-1.5-flash"
+
+        # 2. Groq / OpenAI configuration
         groq_key = os.environ.get("GROQ_API_KEY") or os.environ.get("OPENAI_API_KEY")
         groq_base_url = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
         self.model = model or os.environ.get("GROQ_MODEL") or os.environ.get("OPENAI_MODEL") or "qwen/qwen3.8-27b"
 
-        # Secondary configuration (Local Ollama)
+        # 3. Local Ollama configuration
         self.ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
         self.ollama_model = os.environ.get("OLLAMA_MODEL", "llama3.2")
 
         if not self.force_heuristic:
-            # Initialize primary client if not explicitly passed
+            # Initialize Gemini client if key is available
+            if gemini_key:
+                try:
+                    from openai import OpenAI
+                    self.gemini_client = OpenAI(
+                        api_key=gemini_key,
+                        base_url=gemini_base_url,
+                        timeout=15.0,
+                    )
+                except Exception as e:
+                    logger.warning(f"Could not initialize Gemini client: {e}")
+                    self.gemini_client = None
+
+            # Initialize Groq/OpenAI client if key is available
             if self.client is None and groq_key:
                 try:
                     from openai import OpenAI
@@ -81,7 +101,7 @@ class Strategist:
                         timeout=12.0,
                     )
                 except Exception as e:
-                    logger.warning(f"Could not initialize primary Groq client: {e}")
+                    logger.warning(f"Could not initialize primary Groq/OpenAI client: {e}")
                     self.client = None
 
             # Initialize secondary Ollama client
@@ -127,14 +147,27 @@ class Strategist:
         return directive, tokens
 
     def choose(self, incident: IncidentRecord, violation: Optional[str] = None) -> Directive:
-        """Choose a path repair directive using Tier 1 (Groq) -> Tier 2 (Ollama) -> Tier 3 (Heuristic)."""
+        """Choose a path repair directive using Gemini -> Groq -> Ollama -> Heuristic."""
         start_time = time.perf_counter()
         self.total_calls += 1
 
         if not self.force_heuristic:
             user_msg = format_user_prompt(incident, violation)
 
-            # --- Tier 1: Groq API ---
+            # --- Tier 1: Gemini API ---
+            if self.gemini_client is not None:
+                try:
+                    directive, tokens = self._call_llm_json(self.gemini_client, self.gemini_model, user_msg)
+                    elapsed_ms = (time.perf_counter() - start_time) * 1000.0
+                    self.last_latency_ms = round(elapsed_ms, 2)
+                    self.last_tokens = tokens
+                    self.total_tokens += tokens
+                    self.last_provider = "gemini"
+                    return directive
+                except Exception as e:
+                    logger.warning(f"Gemini LLM call failed: {e}. Attempting fallback.")
+
+            # --- Tier 2: Groq / OpenAI API ---
             if self.client is not None:
                 try:
                     directive, tokens = self._call_llm_json(self.client, self.model, user_msg)
@@ -145,9 +178,9 @@ class Strategist:
                     self.last_provider = "groq"
                     return directive
                 except Exception as e:
-                    logger.warning(f"Groq LLM call failed: {e}. Attempting Ollama fallback.")
+                    logger.warning(f"Groq/OpenAI LLM call failed: {e}. Attempting Ollama fallback.")
 
-            # --- Tier 2: Ollama Local Fallback ---
+            # --- Tier 3: Ollama Local Fallback ---
             if self.ollama_client is not None:
                 try:
                     directive, tokens = self._call_llm_json(self.ollama_client, self.ollama_model, user_msg)
@@ -160,7 +193,7 @@ class Strategist:
                 except Exception as e:
                     logger.info(f"Ollama fallback unavailable or failed: {e}. Falling back to deterministic heuristic.")
 
-        # --- Tier 3: Deterministic Heuristic Fallback ---
+        # --- Tier 4: Deterministic Heuristic Fallback ---
         directive = self._heuristic_choice(incident, violation)
         elapsed_ms = (time.perf_counter() - start_time) * 1000.0
         self.last_latency_ms = round(elapsed_ms, 2)
