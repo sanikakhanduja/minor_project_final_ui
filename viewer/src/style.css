@@ -239,6 +239,36 @@ html {
   color: #55EEA4;
 }
 
+.header-nav-dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  background: rgba(49, 133, 255, 0.16);
+  border: 1px solid rgba(49, 133, 255, 0.45);
+  border-radius: var(--radius-md);
+  color: #60A5FA;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.header-nav-dashboard-btn:hover {
+  background: var(--accent-primary);
+  border-color: #60A5FA;
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(49, 133, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.header-nav-dashboard-btn svg {
+  color: currentColor;
+}
+
 /* ==========================================================================
    2. MAIN CENTRAL STAGE (VIEWPORT + SIDEBAR)
    ========================================================================== */
