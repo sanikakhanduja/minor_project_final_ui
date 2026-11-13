@@ -56,34 +56,11 @@
 
     <!-- MAIN DASHBOARD CONTENT -->
     <main class="dash-main">
-      <!-- MISSION & PIPELINE BANNER -->
-      <section class="mission-banner">
-        <div class="banner-content">
-          <h1>
-            Disruption-Aware Path Repair Architecture
-            <span class="title-tag">Closed-Loop Verified</span>
-          </h1>
-          <p>
-            Deterministic validator-gated, LLM-guided strategy framework with feature-vector caching.
-            Evaluated on standard MovingAI warehouse maps against classical MAPF solvers (PIBT, LNS, Windowed PBS).
-          </p>
-        </div>
-
-        <div class="banner-pipeline-flow">
-          <span class="pipeline-node">Sentinel Detect</span>
-          <span class="pipeline-arrow">➔</span>
-          <span class="pipeline-node active">Cache Lookup</span>
-          <span class="pipeline-arrow">➔</span>
-          <span class="pipeline-node">Dry-Run Check</span>
-          <span class="pipeline-arrow">➔</span>
-          <span class="pipeline-node">LLM Strategist</span>
-          <span class="pipeline-arrow">➔</span>
-          <span class="pipeline-node">MAPF Solver</span>
-          <span class="pipeline-arrow">➔</span>
-          <span class="pipeline-node active">Validator Gate</span>
+      <section class="section-heading-group" aria-labelledby="headline-kpis-heading">
+        <div>
+          <h1 class="section-title" id="headline-kpis-heading">Headline KPIs</h1>
         </div>
       </section>
-
       <!-- KPI METRIC CARDS GRID -->
       <section class="kpi-cards-grid">
         <!-- 1. Overall Repair Success Rate -->
@@ -106,10 +83,30 @@
           </div>
         </div>
 
-        <!-- 2. Mean Recovery Time -->
+        <!-- 2. Verified Cache Hit Rate -->
+        <div class="kpi-card" style="--card-accent: var(--accent-purple);">
+          <div class="kpi-card-header">
+            <span class="kpi-card-title">Cache Success Rate</span>
+            <div class="kpi-card-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-card-value-row">
+            <span class="kpi-card-val" id="val-cache-rate">66.7%</span>
+            <span class="kpi-card-unit">hits</span>
+          </div>
+          <div class="kpi-card-sub">
+            <span class="badge-lift neutral" id="val-llm-avoided">4 Calls Avoided</span>
+            <span>zero token cost</span>
+          </div>
+        </div>
+
+        <!-- 3. Mean Recovery Time -->
         <div class="kpi-card" style="--card-accent: var(--accent-cyan);">
           <div class="kpi-card-header">
-            <span class="kpi-card-title">Mean Recovery Steps</span>
+            <span class="kpi-card-title">Mean Recovery Time</span>
             <div class="kpi-card-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -127,80 +124,22 @@
           </div>
         </div>
 
-        <!-- 3. Verified Cache Hit Rate -->
-        <div class="kpi-card" style="--card-accent: var(--accent-purple);">
-          <div class="kpi-card-header">
-            <span class="kpi-card-title">Strategy Cache Hit Rate</span>
-            <div class="kpi-card-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="kpi-card-value-row">
-            <span class="kpi-card-val" id="val-cache-rate">66.7%</span>
-            <span class="kpi-card-unit">hits</span>
-          </div>
-          <div class="kpi-card-sub">
-            <span class="badge-lift neutral" id="val-llm-avoided">4 Calls Avoided</span>
-            <span>zero token cost</span>
-          </div>
-        </div>
-
-        <!-- 4. Latency Speedup via Caching -->
-        <div class="kpi-card" style="--card-accent: var(--accent-amber);">
-          <div class="kpi-card-header">
-            <span class="kpi-card-title">Cache Speedup Factor</span>
-            <div class="kpi-card-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-            </div>
-          </div>
-          <div class="kpi-card-value-row">
-            <span class="kpi-card-val" id="val-latency-speedup">~760x</span>
-            <span class="kpi-card-unit">faster</span>
-          </div>
-          <div class="kpi-card-sub">
-            <span>Cache: <strong>1.11 ms</strong> vs LLM: <strong>840 ms</strong></span>
-          </div>
-        </div>
-
-        <!-- 5. Safety Violations Prevented -->
-        <div class="kpi-card" style="--card-accent: var(--accent-green);">
-          <div class="kpi-card-header">
-            <span class="kpi-card-title">Safety Violations Executed</span>
-            <div class="kpi-card-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="kpi-card-value-row">
-            <span class="kpi-card-val" id="val-violations">0 (100% Gated)</span>
-          </div>
-          <div class="kpi-card-sub">
-            <span>Vertex & edge swaps intercepted</span>
-          </div>
-        </div>
-
-        <!-- 6. Active AMR Fleet -->
+        <!-- Throughput estimate from the seeded cost/compute sample data. -->
         <div class="kpi-card" style="--card-accent: var(--accent-blue);">
           <div class="kpi-card-header">
-            <span class="kpi-card-title">AMR Fleet Capacity</span>
+            <span class="kpi-card-title">Throughput</span>
             <div class="kpi-card-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
               </svg>
             </div>
           </div>
           <div class="kpi-card-value-row">
-            <span class="kpi-card-val" id="val-active-robots">100 AMRs</span>
+            <span class="kpi-card-val" id="val-throughput">--</span>
+            <span class="kpi-card-unit">% loss</span>
           </div>
           <div class="kpi-card-sub">
-            <span>MovingAI 161x63 Warehouse</span>
+            <span>Estimated from seeded sample data</span>
           </div>
         </div>
       </section>

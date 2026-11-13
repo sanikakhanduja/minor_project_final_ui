@@ -495,6 +495,7 @@ function updateCostComputeSection() {
   const elHitDelta = document.getElementById('cc-delta-hit-rate');
   const elAvgLatency = document.getElementById('cc-val-avg-latency');
   const elLatencyDelta = document.getElementById('cc-delta-latency');
+  const elThroughput = document.getElementById('val-throughput');
 
   if (N === 0) {
     if (elCalls) elCalls.textContent = '0';
@@ -506,6 +507,7 @@ function updateCostComputeSection() {
     if (elHitDelta) elHitDelta.textContent = '0% trend';
     if (elAvgLatency) elAvgLatency.textContent = '0.0';
     if (elLatencyDelta) elLatencyDelta.textContent = 'N/A';
+    if (elThroughput) elThroughput.textContent = 'N/A';
 
     renderRollingHitRateChart('chart-rolling-hit-rate', []);
     renderWithWithoutCacheChart('chart-with-without-cache', []);
@@ -534,6 +536,7 @@ function updateCostComputeSection() {
   const cacheHitRate = withCacheItems.length > 0 ? (cacheHits / withCacheItems.length) * 100 : 0;
 
   const avgLatency = filtered.reduce((sum, i) => sum + i.total_decision_latency_ms, 0) / N;
+  const avgThroughputLoss = filtered.reduce((sum, i) => sum + i.throughput_loss_pct, 0) / N;
   const hitLatencies = filtered.filter(i => i.cache_hit).map(i => i.total_decision_latency_ms);
   const missLatencies = filtered.filter(i => !i.cache_hit).map(i => i.total_decision_latency_ms);
   const avgHitLat = hitLatencies.length ? hitLatencies.reduce((a, b) => a + b, 0) / hitLatencies.length : 1.2;
@@ -549,6 +552,7 @@ function updateCostComputeSection() {
   if (elHitDelta) elHitDelta.textContent = `Climbing 0% ➔ ~60%`;
   if (elAvgLatency) elAvgLatency.textContent = avgLatency.toFixed(1);
   if (elLatencyDelta) elLatencyDelta.textContent = `~${speedupFactor}x faster on hit`;
+  if (elThroughput) elThroughput.textContent = avgThroughputLoss.toFixed(1);
 
   // 2. Part B: Line Chart (Rolling Cache Hit Rate)
   const linePoints: Array<{ x: number; y: number }> = [];
