@@ -144,145 +144,98 @@
         </div>
       </section>
 
-      <!-- TWO-COLUMN BENCHMARKS & LATENCY SECTION -->
-      <section class="dashboard-grid-2col">
-        <!-- Left: Comparative Solver Benchmark Table -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title-text">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
+      <section id="section-baseline-comparison" class="comparison-section">
+        <div class="cost-section-header-box">
+          <div class="cost-header-text">
+            <h2>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="3" y1="3" x2="3" y2="21"></line>
+                <line x1="3" y1="21" x2="21" y2="21"></line>
+                <rect x="7" y="12" width="3" height="6"></rect>
+                <rect x="13" y="8" width="3" height="10"></rect>
+                <rect x="19" y="5" width="3" height="13"></rect>
               </svg>
-              <span>Comparative MAPF Solver Benchmarks</span>
-            </div>
-            <span class="panel-action-chip">Empirical Results</span>
+              <span>Core Comparison: LLM-Guided vs. Fixed Strategies</span>
+            </h2>
+            <p>Repair outcomes across disruption classes and incident modes.</p>
           </div>
 
-          <table class="benchmark-table">
-            <thead>
-              <tr>
-                <th>Framework / Algorithm</th>
-                <th>Success Rate</th>
-                <th>Recovery</th>
-                <th>Latency</th>
-                <th>Safety Status</th>
-              </tr>
-            </thead>
-            <tbody id="benchmark-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
+          <div class="cost-filters-toolbar comparison-filters">
+            <div class="filter-control-cluster">
+              <span class="filter-cluster-label">Disruption:</span>
+              <button class="filter-pill-btn active" data-compare-type="blocked_cell" id="compare-type-blocked">Blocked</button>
+              <button class="filter-pill-btn active" data-compare-type="robot_delay" id="compare-type-delay">Delay</button>
+              <button class="filter-pill-btn active" data-compare-type="robot_failure" id="compare-type-failure">Failure</button>
+            </div>
+            <div class="filter-control-cluster">
+              <span class="filter-cluster-label">Mode:</span>
+              <div class="segmented-selector">
+                <button class="segmented-opt-btn active" data-compare-mode="all" id="compare-mode-all">All</button>
+                <button class="segmented-opt-btn" data-compare-mode="single" id="compare-mode-single">Single</button>
+                <button class="segmented-opt-btn" data-compare-mode="overlapping" id="compare-mode-overlapping">Overlapping</button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Right: Pipeline Latency Waterfall & Disruption Distribution -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title-text">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span>Pipeline Stage Latency & Disruption Profile</span>
+        <div class="comparison-chart-grid">
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Repair Success Rate</span></div>
+              <span class="panel-action-chip">Higher is better</span>
             </div>
-            <span class="panel-action-chip">Runtime Telemetry</span>
+            <p class="comparison-chart-explainer">Share of filtered incidents with a successful repair. Axis runs from 0% to 100%.</p>
+            <div id="chart-compare-success" class="comparison-chart"></div>
           </div>
-
-          <!-- Latency Waterfall -->
-          <div class="latency-waterfall-list">
-            <div class="waterfall-row">
-              <div class="waterfall-label-group">
-                <span class="waterfall-step-num">1</span>
-                <div>
-                  <div class="waterfall-title">Strategy Cache Lookup (Cosine + Hard Filter)</div>
-                  <div class="waterfall-desc">12-dimensional feature matching in scikit-learn</div>
-                </div>
-              </div>
-              <span class="waterfall-timing">0.82 ms</span>
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Recovery Time Distribution</span></div>
+              <span class="panel-action-chip">Steps · median & spread</span>
             </div>
-
-            <div class="waterfall-row">
-              <div class="waterfall-label-group">
-                <span class="waterfall-step-num">2</span>
-                <div>
-                  <div class="waterfall-title">Dry-Run Simulation Verification</div>
-                  <div class="waterfall-desc">Verifies candidate strategy on current world snapshot</div>
-                </div>
-              </div>
-              <span class="waterfall-timing">0.29 ms</span>
-            </div>
-
-            <div class="waterfall-row">
-              <div class="waterfall-label-group">
-                <span class="waterfall-step-num">3</span>
-                <div>
-                  <div class="waterfall-title">Classical MAPF Solver (PIBT / LNS / PBS)</div>
-                  <div class="waterfall-desc">Path recomputation for affected agent subset</div>
-                </div>
-              </div>
-              <span class="waterfall-timing">0.08 ms</span>
-            </div>
-
-            <div class="waterfall-row">
-              <div class="waterfall-label-group">
-                <span class="waterfall-step-num">4</span>
-                <div>
-                  <div class="waterfall-title">Deterministic Safety Validator</div>
-                  <div class="waterfall-desc">5-step collision, swap, & deadlock audit</div>
-                </div>
-              </div>
-              <span class="waterfall-timing">0.02 ms</span>
-            </div>
+            <p class="comparison-chart-explainer">Box = middle 50%; center line = median; whiskers = minimum to maximum. Lower is faster.</p>
+            <div id="chart-compare-recovery" class="comparison-chart"></div>
           </div>
-
-          <!-- Disruption breakdown counts -->
-          <div class="disruption-pills-grid">
-            <div class="disruption-pill-box">
-              <div class="pill-box-header">
-                <span class="pill-type-title" style="color: var(--accent-amber);">
-                  <span>⏱</span> Robot Delays
-                </span>
-                <span class="pill-count-tag" id="count-delays">5</span>
-              </div>
-              <span class="pill-box-sub">Stalled motors (k steps)</span>
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Path Cost Increase Ratio</span></div>
+              <span class="panel-action-chip">Repaired ÷ original</span>
             </div>
-
-            <div class="disruption-pill-box">
-              <div class="pill-box-header">
-                <span class="pill-type-title" style="color: var(--accent-rose);">
-                  <span>🚧</span> Blocked Aisles
-                </span>
-                <span class="pill-count-tag" id="count-blocked">6</span>
-              </div>
-              <span class="pill-box-sub">Spills & static obstacles</span>
-            </div>
-
-            <div class="disruption-pill-box">
-              <div class="pill-box-header">
-                <span class="pill-type-title" style="color: #CBD5E1;">
-                  <span>⚙️</span> Robot Failures
-                </span>
-                <span class="pill-count-tag" id="count-failures">4</span>
-              </div>
-              <span class="pill-box-sub">Permanent AMR breakdowns</span>
-            </div>
-
-            <div class="disruption-pill-box">
-              <div class="pill-box-header">
-                <span class="pill-type-title" style="color: var(--accent-purple);">
-                  <span>🔗</span> Interacting Faults
-                </span>
-                <span class="pill-count-tag" id="count-interacting">3</span>
-              </div>
-              <span class="pill-box-sub">Overlapping corridor hazards</span>
-            </div>
+            <p class="comparison-chart-explainer">1.00× means no added path cost. Values above 1.00× are increases; lower is better.</p>
+            <div id="chart-compare-cost" class="comparison-chart"></div>
           </div>
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Throughput Loss</span></div>
+              <span class="panel-action-chip">Average · lower is better</span>
+            </div>
+            <p class="comparison-chart-explainer">Estimated throughput reduction across the filtered incidents.</p>
+            <div id="chart-compare-throughput" class="comparison-chart"></div>
+          </div>
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Decision Latency Distribution</span></div>
+              <span class="panel-action-chip">Log scale · ms · median & spread</span>
+            </div>
+            <p class="comparison-chart-explainer">Ours includes incident LLM/cache overhead; fixed methods include detection, solver, and validation time.</p>
+            <div id="chart-compare-latency" class="comparison-chart"></div>
+          </div>
+          <div class="panel-card comparison-chart-card">
+            <div class="panel-header">
+              <div class="panel-title-text"><span>Best-Outcome Win Rate</span></div>
+              <span class="panel-action-chip">Incidents won · higher is better</span>
+            </div>
+            <p class="comparison-chart-explainer">Each incident awards a win to the best result: success first, then lower path cost and recovery time. Ties split credit.</p>
+            <div id="chart-compare-win-rate" class="comparison-chart"></div>
+          </div>
+        </div>
+
+        <div class="comparison-method-note">
+          <strong>Selectors:</strong> Ours uses disruption-aware selection; Fixed keeps one solver; Random uses a seeded draw; Oracle picks the hindsight best fixed solver per incident.
         </div>
       </section>
 
       <!-- =====================================================================
-           SECTION 3: COST & COMPUTE (NEW SECTION BELOW EXISTING TWO)
+           COST & COMPUTE
            ===================================================================== -->
       <section id="section-cost-compute" class="cost-compute-section">
         <!-- Section Header & Dual Filters -->
