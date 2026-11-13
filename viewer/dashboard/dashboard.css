@@ -841,6 +841,402 @@ body::before {
   color: #07111B;
 }
 
+/* ==========================================================================
+   SECTION 3: COST & COMPUTE STYLING
+   ========================================================================== */
+.cost-compute-section {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.cost-section-header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(13, 24, 36, 0.95) 0%, rgba(19, 33, 48, 0.8) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 22px;
+  box-shadow: var(--shadow-card);
+}
+
+.cost-header-text h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cost-header-text p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Two Filters: Disruption Type & Mode */
+.cost-filters-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.filter-control-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-cluster-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.filter-pill-btn {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.filter-pill-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.filter-pill-btn.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.segmented-selector {
+  display: inline-flex;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.segmented-opt-btn {
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.segmented-opt-btn:hover {
+  color: var(--text-primary);
+}
+
+.segmented-opt-btn.active {
+  background: var(--accent-blue);
+  color: #FFFFFF;
+}
+
+/* Stat Cards & Saved Deltas */
+.cost-delta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(56, 217, 138, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(56, 217, 138, 0.3);
+}
+
+.cost-delta-badge.secondary {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.cost-sub-price {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+/* Validator Dedicated Panel */
+.validator-master-card {
+  background: var(--panel-bg);
+  border: 1px solid rgba(56, 217, 138, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.validator-master-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #38D98A 0%, #38BDF8 100%);
+}
+
+.validator-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+
+.val-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.val-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.val-stat-number {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.val-stat-desc {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.validator-charts-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .validator-charts-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.val-sub-chart-box {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.val-sub-chart-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.validator-caption-callout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(56, 217, 138, 0.08);
+  border: 1px solid rgba(56, 217, 138, 0.25);
+  color: #A7F3D0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Compact Table in Cost & Compute */
+.compact-metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.compact-metrics-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-elevated);
+}
+
+.compact-metrics-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Collapsible "More details" Expander */
+.more-details-expander {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
+}
+
+.more-details-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  transition: background 0.15s;
+}
+
+.more-details-summary:hover {
+  background: var(--surface-hover);
+}
+
+.more-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.expander-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expander-chevron {
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+}
+
+.more-details-expander[open] .expander-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-cyan);
+}
+
+.expander-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.expander-sub-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expander-sub-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* SVG Chart Elements & Interactive Tooltip */
+.chart-svg-root {
+  overflow: visible;
+  display: block;
+}
+
+.chart-bar-rect {
+  transition: opacity 0.15s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+
+.chart-bar-rect:hover {
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4));
+}
+
+.chart-point-marker {
+  cursor: pointer;
+  transition: r 0.15s ease, stroke-width 0.15s ease;
+}
+
+.chart-point-marker:hover {
+  r: 5.5;
+  stroke-width: 2.5;
+}
+
+#chart-tooltip.chart-tooltip-box {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  background: rgba(13, 24, 36, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.4;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+#chart-tooltip.chart-tooltip-box strong {
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+}
+
 /* FOOTER */
 .dash-footer {
   border-top: 1px solid var(--border-color);
@@ -852,4 +1248,5 @@ body::before {
   font-size: 11px;
   background: var(--panel-bg);
 }
+
 

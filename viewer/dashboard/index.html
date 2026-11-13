@@ -342,6 +342,324 @@
         </div>
       </section>
 
+      <!-- =====================================================================
+           SECTION 3: COST & COMPUTE (NEW SECTION BELOW EXISTING TWO)
+           ===================================================================== -->
+      <section id="section-cost-compute" class="cost-compute-section">
+        <!-- Section Header & Dual Filters -->
+        <div class="cost-section-header-box">
+          <div class="cost-header-text">
+            <h2>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              <span>Cost & Compute Analysis</span>
+            </h2>
+            <p>Evaluating strategy cache token savings, execution speedup, and deterministic safety enforcement.</p>
+          </div>
+
+          <!-- Filters: Disruption Type & Mode -->
+          <div class="cost-filters-toolbar">
+            <div class="filter-control-cluster">
+              <span class="filter-cluster-label">Disruption:</span>
+              <button class="filter-pill-btn active" data-type="blocked_cell" id="filter-type-blocked">
+                <span>🚧 Blocked</span>
+              </button>
+              <button class="filter-pill-btn active" data-type="robot_delay" id="filter-type-delay">
+                <span>⏱ Delay</span>
+              </button>
+              <button class="filter-pill-btn active" data-type="robot_failure" id="filter-type-failure">
+                <span>⚙ Failure</span>
+              </button>
+            </div>
+
+            <div class="filter-control-cluster">
+              <span class="filter-cluster-label">Mode:</span>
+              <div class="segmented-selector">
+                <button class="segmented-opt-btn active" data-mode="all" id="filter-mode-all">All</button>
+                <button class="segmented-opt-btn" data-mode="single" id="filter-mode-single">Single</button>
+                <button class="segmented-opt-btn" data-mode="overlapping" id="filter-mode-overlapping">Overlapping</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part A: 4 Stat Cards with "saved by cache" deltas -->
+        <div class="kpi-cards-grid">
+          <!-- Stat 1: Total LLM Calls -->
+          <div class="kpi-card" style="--card-accent: var(--accent-purple);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Total LLM Calls</span>
+              <div class="kpi-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-card-value-row">
+              <span class="kpi-card-val" id="cc-val-llm-calls">--</span>
+              <span class="kpi-card-unit">inferences</span>
+            </div>
+            <div class="kpi-card-sub">
+              <span class="cost-delta-badge" id="cc-delta-llm-calls">-- saved by cache</span>
+            </div>
+          </div>
+
+          <!-- Stat 2: Total Tokens & Cost -->
+          <div class="kpi-card" style="--card-accent: var(--accent-blue);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Total Tokens & Est. Cost</span>
+              <div class="kpi-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-card-value-row">
+              <span class="kpi-card-val" id="cc-val-tokens">--</span>
+              <span class="kpi-card-unit">tokens</span>
+            </div>
+            <div class="kpi-card-sub">
+              <span class="cost-delta-badge" id="cc-delta-tokens">-- saved</span>
+              <span class="cost-sub-price" id="cc-val-dollar-cost">($0.00)</span>
+            </div>
+          </div>
+
+          <!-- Stat 3: Cache Hit Rate -->
+          <div class="kpi-card" style="--card-accent: var(--accent-green);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Verified Cache Hit Rate</span>
+              <div class="kpi-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-card-value-row">
+              <span class="kpi-card-val" id="cc-val-hit-rate">--%</span>
+              <span class="kpi-card-unit">reuse</span>
+            </div>
+            <div class="kpi-card-sub">
+              <span class="cost-delta-badge secondary" id="cc-delta-hit-rate">Rising 0% ➔ ~60%</span>
+            </div>
+          </div>
+
+          <!-- Stat 4: Average Decision Latency -->
+          <div class="kpi-card" style="--card-accent: var(--accent-amber);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Avg Decision Latency</span>
+              <div class="kpi-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="kpi-card-value-row">
+              <span class="kpi-card-val" id="cc-val-avg-latency">--</span>
+              <span class="kpi-card-unit">ms</span>
+            </div>
+            <div class="kpi-card-sub">
+              <span class="cost-delta-badge" id="cc-delta-latency">-- speedup</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Always Visible Charts: Part B & Part C -->
+        <div class="dashboard-grid-2col">
+          <!-- Part B: Line Chart: Rolling Cache Hit Rate -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <span>Rolling Strategy Cache Hit Rate</span>
+              </div>
+              <span class="panel-action-chip">50-Incident Window</span>
+            </div>
+            <div id="chart-rolling-hit-rate" style="height: 220px; width: 100%;"></div>
+          </div>
+
+          <!-- Part C: Grouped Bar: With Cache vs Without Cache -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <line x1="9" y1="9" x2="9" y2="15"></line>
+                  <line x1="15" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span>With Cache vs Without Cache</span>
+              </div>
+              <span class="panel-action-chip">Efficiency & Performance</span>
+            </div>
+            <div id="chart-with-without-cache" style="height: 220px; width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Part D: VALIDATOR PANEL (Equal visual weight, own sub-header & caption) -->
+        <div class="validator-master-card">
+          <div class="panel-header" style="border-bottom-color: rgba(56, 217, 138, 0.2);">
+            <div class="panel-title-text">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38D98A" stroke-width="2.2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span style="color: #A7F3D0;">Deterministic Safety Validator Gate</span>
+            </div>
+            <span class="panel-action-chip" style="border-color: rgba(56, 217, 138, 0.3); color: #38D98A;">Zero Collisions Executed</span>
+          </div>
+
+          <!-- Stat Row -->
+          <div class="validator-stat-row">
+            <div class="val-stat-item">
+              <span class="val-stat-label">Invalid Plans Caught</span>
+              <span class="val-stat-number" id="val-stat-caught" style="color: var(--accent-rose);">--</span>
+              <span class="val-stat-desc">Vertex / Edge / Block / Deadlock</span>
+            </div>
+
+            <div class="val-stat-item">
+              <span class="val-stat-label">LLM Retry Success</span>
+              <span class="val-stat-number" id="val-stat-retry-rate" style="color: var(--accent-green);">--%</span>
+              <span class="val-stat-desc">Resolved on 1st retry</span>
+            </div>
+
+            <div class="val-stat-item">
+              <span class="val-stat-label">Fallback Solver Rate</span>
+              <span class="val-stat-number" id="val-stat-fallback-rate" style="color: var(--accent-amber);">--%</span>
+              <span class="val-stat-desc">Deterministic bounded fallback</span>
+            </div>
+
+            <div class="val-stat-item">
+              <span class="val-stat-label">Avg Validation Time</span>
+              <span class="val-stat-number" id="val-stat-avg-time" style="color: var(--accent-cyan);">-- ms</span>
+              <span class="val-stat-desc">5-step deterministic audit</span>
+            </div>
+          </div>
+
+          <!-- Validator 2-Col Charts -->
+          <div class="validator-charts-2col">
+            <!-- Left Chart: Violations Executed (With vs Without) -->
+            <div class="val-sub-chart-box">
+              <div class="val-sub-chart-title">
+                <span>Violations Reaching Execution</span>
+                <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">With Validator vs Unvalidated</span>
+              </div>
+              <div id="chart-validator-violations" style="height: 200px; width: 100%;"></div>
+            </div>
+
+            <!-- Right Chart: Cost of Validation -->
+            <div class="val-sub-chart-box">
+              <div class="val-sub-chart-title">
+                <span>Overhead of Validation Gate</span>
+                <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">Per-incident check & retries</span>
+              </div>
+              <div id="chart-validator-cost" style="height: 200px; width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Mandatory Caption Callout -->
+          <div class="validator-caption-callout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Validator trades a small overhead for zero invalid plans executed.</span>
+          </div>
+        </div>
+
+        <!-- Always Visible: Part E (Stacked Latency Bar) & Part F (Compact Metrics Table) -->
+        <div class="dashboard-grid-2col">
+          <!-- Part E: Stacked Latency Bar Chart (Hit vs Miss) -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                </svg>
+                <span>Stage-by-Stage Latency (Hit vs Miss)</span>
+              </div>
+              <span class="panel-action-chip">Milliseconds</span>
+            </div>
+            <div id="chart-stacked-latency" style="height: 220px; width: 100%;"></div>
+          </div>
+
+          <!-- Part F: Compact Summary Table -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+                <span>Solver Runtimes & Dry-Run Metrics</span>
+              </div>
+              <span class="panel-action-chip">Averaged Telemetry</span>
+            </div>
+
+            <table class="compact-metrics-table">
+              <thead>
+                <tr>
+                  <th>Metric / Dimension</th>
+                  <th>Value</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="cc-table-summary-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Collapsed Expander: "More details" -->
+        <details class="more-details-expander" id="cost-compute-more-details">
+          <summary class="more-details-summary">
+            <div class="expander-header-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>More details (Tokens, Cache Evolution & Quality Impact)</span>
+            </div>
+            <svg class="expander-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+
+          <div class="expander-content-grid">
+            <!-- Part G: Token Usage over Time & Input vs Output Split -->
+            <div class="expander-sub-card">
+              <span class="expander-sub-card-title">Token Usage & Input/Output Split</span>
+              <div id="chart-token-usage" style="height: 180px; width: 100%;"></div>
+            </div>
+
+            <!-- Part H: Cache & Negative Memory Size Growth -->
+            <div class="expander-sub-card">
+              <span class="expander-sub-card-title">Cache & Negative Memory Evolution</span>
+              <div id="chart-cache-growth" style="height: 180px; width: 100%;"></div>
+            </div>
+
+            <!-- Part I: Extra Steps & Throughput Loss by Disruption Type -->
+            <div class="expander-sub-card">
+              <span class="expander-sub-card-title">Path Overhead by Disruption Type</span>
+              <div id="chart-quality-disruption" style="height: 180px; width: 100%;"></div>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <!-- FULL-WIDTH INCIDENT AUDIT LOG -->
       <section class="panel-card">
         <div class="panel-header">
